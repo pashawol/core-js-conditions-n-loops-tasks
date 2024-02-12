@@ -331,10 +331,44 @@ function getBalanceIndex(arr) {
  *          [10, 9,  8,  7]
  *        ]
  */
-function getSpiralMatrix(/* size */) {
-  throw new Error('Not implemented');
-}
+function getSpiralMatrix(size) {
+  const matrix = [];
 
+  for (let i = 0; i < size; i += 1) {
+    matrix[i] = [];
+    for (let j = 0; j < size; j += 1) {
+      matrix[i][j] = 0;
+    }
+  }
+
+  const size2 = size - 1;
+  let index = 0;
+  const maxIndex = Math.ceil(size2 / 2);
+  let number = 1;
+
+  while (index <= maxIndex) {
+    for (let i = index; i <= size2 - index; i += 1) {
+      matrix[index][i] = number;
+      number += 1;
+    }
+    for (let i = index + 1; i <= size2 - index; i += 1) {
+      matrix[i][size2 - index] = number;
+      number += 1;
+    }
+    for (let i = size2 - index - 1; i >= index; i -= 1) {
+      matrix[size2 - index][i] = number;
+      number += 1;
+    }
+    for (let i = size2 - index - 1; i >= index + 1; i -= 1) {
+      matrix[i][index] = number;
+      number += 1;
+    }
+    index += 1;
+  }
+
+  return matrix;
+}
+// console.log(getSpiralMatrix(5));
 /**
  * Rotates a matrix by 90 degrees clockwise in place.
  * Take into account that the matrix size can be very large. Consider how you can optimize your solution.
@@ -350,8 +384,22 @@ function getSpiralMatrix(/* size */) {
  *    [7, 8, 9]         [9, 6, 3]
  *  ]                 ]
  */
-function rotateMatrix(/* matrix */) {
-  throw new Error('Not implemented');
+function rotateMatrix(matrix) {
+  const newMatrix = matrix;
+  const size = matrix.length - 1;
+  const maxIndex = Math.ceil(size / 2);
+  let index = 0;
+  while (index <= maxIndex) {
+    for (let i = index; i < size - index; i += 1) {
+      const temp = matrix[index][i];
+      newMatrix[index][i] = matrix[size - i][index];
+      newMatrix[size - i][index] = matrix[size - index][size - i];
+      newMatrix[size - index][size - i] = matrix[i][size - index];
+      newMatrix[i][size - index] = temp;
+    }
+    index += 1;
+  }
+  return newMatrix;
 }
 
 /**
@@ -368,8 +416,31 @@ function rotateMatrix(/* matrix */) {
  *  [2, 9, 5, 9]    => [2, 5, 9, 9]
  *  [-2, 9, 5, -3]  => [-3, -2, 5, 9]
  */
-function sortByAsc(/* arr */) {
-  throw new Error('Not implemented');
+function sortByAsc(arr) {
+  const sorArt = arr;
+  if (arr.length <= 1) return arr;
+
+  const pivot = arr[0];
+  let left = [];
+  let right = [];
+
+  for (let i = 1; i < arr.length; i += 1) {
+    if (arr[i] < pivot) {
+      left[left.length] = arr[i];
+    } else {
+      right[right.length] = arr[i];
+    }
+  }
+
+  left = sortByAsc(left);
+  right = sortByAsc(right);
+
+  const resArr = [...left, pivot, ...right];
+  for (let i = 0; i < arr.length; i += 1) {
+    sorArt[i] = resArr[i];
+  }
+
+  return sorArt;
 }
 
 /**
@@ -389,8 +460,19 @@ function sortByAsc(/* arr */) {
  *  '012345', 3 => '024135' => '043215' => '031425'
  *  'qwerty', 3 => 'qetwry' => 'qtrewy' => 'qrwtey'
  */
-function shuffleChar(/* str, iterations */) {
-  throw new Error('Not implemented');
+function shuffleChar(str, iterations) {
+  let res = str;
+  for (let i = 1; i <= iterations; i += 1) {
+    let odd = '';
+    let even = '';
+    for (let j = 0; j < res.length; j += 1) {
+      if (j % 2 === 0) even += res[j];
+      if (j % 2 === 1) odd += res[j];
+    }
+    res = even + odd;
+    if (res === str) return shuffleChar(str, iterations % i);
+  }
+  return res;
 }
 
 /**
@@ -410,8 +492,33 @@ function shuffleChar(/* str, iterations */) {
  * @param {number} number The source number
  * @returns {number} The nearest larger number, or original number if none exists.
  */
-function getNearestBigger(/* number */) {
-  throw new Error('Not implemented');
+function getNearestBigger(number) {
+  const numArr = Array.from(`${number}`, (el) => el);
+  let i = numArr.length - 2;
+
+  while (i >= 0 && numArr[i] >= numArr[i + 1]) {
+    i -= 1;
+  }
+
+  if (i < 0) return number;
+  let j = numArr.length - 1;
+
+  while (numArr[j] <= numArr[i]) {
+    j -= 1;
+  }
+
+  [numArr[i], numArr[j]] = [numArr[j], numArr[i]];
+
+  const arr = [...numArr];
+  const res = parseInt(
+    [
+      ...arr.splice(0, i + 1),
+      ...numArr.splice(i + 1).sort((a, b) => a - b),
+    ].join(''),
+    10
+  );
+
+  return res > number ? res : number;
 }
 
 module.exports = {
